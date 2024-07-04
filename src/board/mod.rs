@@ -3,6 +3,11 @@ use crate::ship::ShipPoint;
 pub mod attacking_board;
 pub mod my_board;
 
+pub struct Point {
+    pub row: char,
+    pub col: i8,
+}
+
 pub trait Board {
     fn new() -> Self;
 

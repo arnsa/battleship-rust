@@ -1,6 +1,6 @@
 use rand::Rng;
 use std::{env, io, io::Write};
-use crate::board::{attacking_board::AttackingBoard, my_board::MyBoard, Board};
+use crate::board::{attacking_board::AttackingBoard, my_board::MyBoard, Board, Point};
 
 pub struct Game {
   player_a_board: MyBoard,
@@ -58,7 +58,7 @@ impl Game {
         },
       };
 
-      match self.shoot('A', row, col) {
+      match self.shoot('A', Point { row, col }) {
         Ok(_) => self.player_a_attacking_board.draw_board(),
         Err(err) => {
           println!("Error: {}", err);
@@ -69,15 +69,15 @@ impl Game {
     }
   }
 
-  fn shoot<'a>(&'a mut self, player: char, row: char, col: i8) -> Result<(), &'a str> {
+  fn shoot<'a>(&'a mut self, player: char, point: Point) -> Result<(), &'a str> {
     let (board, attacking_board) = match player {
         'A' => Ok((&mut self.player_b_board, &mut self.player_a_attacking_board)),
         'B' => Ok((&mut self.player_a_board, &mut self.player_b_attacking_board)),
         _ => Err("Invalid player"),
     }?;
 
-    let result = board.did_hit_ship(row, col)?;
-    attacking_board.shoot(row, col, result)?;
+    let result = board.did_hit_ship(&point)?;
+    attacking_board.shoot(&point, result)?;
 
     return Ok(());
   }
@@ -87,7 +87,7 @@ impl Game {
     let row = rng.gen_range(b'A'..=b'J') as char;
     let col = rng.gen_range(1..=10);
 
-    match self.shoot('B', row, col) {
+    match self.shoot('B', Point { row, col }) {
       Ok(_) => println!("Computer shot at: {}{}", row, col),
       Err(_) => self.computer_shoot(),
     };

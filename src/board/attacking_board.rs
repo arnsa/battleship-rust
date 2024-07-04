@@ -1,5 +1,5 @@
 use crate::ship::ShipPoint;
-use super::Board;
+use super::{Board, Point};
 
 #[derive(Debug, Copy, Clone)]
 enum Cell {
@@ -14,16 +14,16 @@ pub struct AttackingBoard {
 }
 
 impl AttackingBoard {
-    pub fn shoot(&mut self, row: char, col: i8, hit_the_target: bool) -> Result<(), &str> {
-        let row = AttackingBoard::letter_to_number(row);
-        let is_point_on_board = AttackingBoard::check_if_point_on_board(&ShipPoint { row, col });
+    pub fn shoot(&mut self, point: &Point, hit_the_target: bool) -> Result<(), &str> {
+        let row = AttackingBoard::letter_to_number(point.row);
+        let is_point_on_board = AttackingBoard::check_if_point_on_board(&ShipPoint { row, col: point.col });
 
         if !is_point_on_board {
             return Err("Point not on board");
         }
 
         let row = self.cells.get_mut(row as usize).ok_or("Invalid row")?;
-        let cell = row.get_mut(col as usize).ok_or("Invalid column")?;
+        let cell = row.get_mut(point.col as usize).ok_or("Invalid column")?;
 
         match cell {
             Cell::Empty => *cell = if hit_the_target { Cell::Hit } else { Cell::Miss },
