@@ -1,3 +1,5 @@
+use std::io::{stdout, Write};
+
 use crate::ship::ShipPoint;
 use super::Board;
 
@@ -34,6 +36,8 @@ impl AttackingBoard {
     }
 
     pub fn draw_board(&self) {
+        // Clears terminal screen
+        print!("{}[2J", 27 as char);
         println!("   A B C D E F G H I J");
         for (index, row) in self.cells.iter().enumerate() {
             let index = index + 1;

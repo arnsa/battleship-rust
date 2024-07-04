@@ -1,3 +1,11 @@
+mod board;
+mod ship;
+mod game;
+
+use game::Game;
+
 fn main() {
-    println!("Hello, world!");
+    let mut game = Game::new();
+
+    game.start();
 }

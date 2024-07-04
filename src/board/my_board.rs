@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, io::Write};
 use rand::Rng;
 use crate::ship::{Ship, ShipDirection, ShipPoint};
 use super::Board;
@@ -43,7 +43,8 @@ impl MyBoard {
             loop {
                 let mut input = String::new();
 
-                println!("Place ship (size: {}): ", ship_size);
+                print!("Place ship (size: {}): ", ship_size);
+                io::stdout().flush().expect("Failed to flush stdout");
                 io::stdin().read_line(&mut input).expect("Failed to read input");
 
                 match MyBoard::parse_user_input(&input) {
