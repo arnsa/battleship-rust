@@ -1,4 +1,5 @@
 use std::io;
+use rand::Rng;
 use crate::ship::{Ship, ShipDirection, ShipPoint};
 use super::Board;
 
@@ -12,6 +13,8 @@ enum Cell {
 pub struct MyBoard {
     cells: [[Cell; 10]; 10],
 }
+
+const SHIPS: [u8; 5] = [5, 4, 3, 3, 2];
 
 impl MyBoard {
     pub fn did_hit_ship(&mut self, row: char, col: i8) -> Result<bool, &str> {
@@ -36,8 +39,6 @@ impl MyBoard {
     }
 
     pub fn initiate_board_with_ships_from_input(&mut self) {
-        const SHIPS: [u8; 5] = [5, 4, 3, 3, 2];
-
         for ship_size in SHIPS {
             loop {
                 let mut input = String::new();
@@ -47,13 +48,40 @@ impl MyBoard {
 
                 match MyBoard::parse_user_input(&input) {
                     Ok((row, col, direction)) => {
-                        match self.place_ship(row, col, ship_size, direction) {
+                        match self.place_ship(row, col, ship_size, &direction) {
                             Ok(_) => break,
                             Err(err) => println!("ERR: {}", err),
                         }
                     },
                     Err(err) => println!("{}", err),
                 };
+            }
+        }
+    }
+
+    pub fn initiate_board_with_ships_at_random(&mut self) {
+        let mut rng = rand::thread_rng();
+
+        for ship_size in SHIPS {
+            loop {
+                let row = rng.gen_range(b'A'..=b'J') as char;
+                let col = rng.gen_range(1..=10);
+                let direction_num = rng.gen_range(0..4);
+                let direction = match direction_num {
+                    0 => ShipDirection::Up,
+                    1 => ShipDirection::Right,
+                    2 => ShipDirection::Down,
+                    3 => ShipDirection::Left,
+                    _ => unreachable!(),
+                };
+
+                match self.place_ship(row, col, ship_size, &direction) {
+                    Ok(_) => {
+                        println!("Added ship (size: {}): {}{} {:?}", ship_size, row, col, direction);
+                        break;
+                    },
+                    Err(_) => (),
+                }
             }
         }
     }
@@ -84,7 +112,7 @@ impl MyBoard {
         return Ok((row, col, direction));
     }
 
-    fn place_ship(&mut self, row: char, col: i8, size: u8, direction: ShipDirection) -> Result<(), &str> {
+    fn place_ship(&mut self, row: char, col: i8, size: u8, direction: &ShipDirection) -> Result<(), &str> {
         let row = MyBoard::letter_to_number(row);
         let start_point = ShipPoint { row, col };
         let end_point = Ship::ship_end_point(&start_point, size, &direction);
