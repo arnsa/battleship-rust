@@ -12,6 +12,18 @@ pub struct ShipPoint {
   pub col: i8,
 }
 
+impl ShipPoint {
+    pub fn new(row: char, col: i8) -> Self {
+        let row = ShipPoint::letter_to_number(row);
+
+        return ShipPoint { row, col };
+    }
+
+    fn letter_to_number(letter: char) -> i8 {
+        return (letter.to_ascii_lowercase()) as i8 - 'a' as i8;
+    }
+}
+
 pub struct Ship {
   pub start_point: ShipPoint,
   pub end_point: ShipPoint,
@@ -136,5 +148,11 @@ mod tests {
                 ShipPoint { row: 14, col: 10 },
             ]
         );
+    }
+
+    #[test]
+    fn letter_to_number() {
+        assert_eq!(0, ShipPoint::letter_to_number('a'));
+        assert_eq!(2, ShipPoint::letter_to_number('c'));
     }
 }

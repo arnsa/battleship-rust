@@ -3,11 +3,6 @@ use crate::ship::ShipPoint;
 pub mod attacking_board;
 pub mod my_board;
 
-pub struct Point {
-    pub row: char,
-    pub col: i8,
-}
-
 pub trait Board {
     fn new() -> Self;
 
@@ -17,10 +12,6 @@ pub trait Board {
         }
 
         return true;
-    }
-
-    fn letter_to_number(letter: char) -> i8 {
-        return (letter.to_ascii_lowercase()) as i8 - 'a' as i8;
     }
 
     fn draw_board<T>(&self, cells: [[T; 10]; 10], draw_cell: fn(&T)) {
@@ -63,11 +54,5 @@ mod tests {
 
         assert!(TestBoard::check_if_point_on_board(&point_on_board));
         assert!(!TestBoard::check_if_point_on_board(&point_off_board));
-    }
-
-    #[test]
-    fn letter_to_number() {
-        assert_eq!(0, TestBoard::letter_to_number('a'));
-        assert_eq!(2, TestBoard::letter_to_number('c'));
     }
 }
