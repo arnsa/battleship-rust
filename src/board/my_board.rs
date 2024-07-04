@@ -48,7 +48,7 @@ impl MyBoard {
 
                 match MyBoard::parse_user_input(&input) {
                     Ok((row, col, direction)) => {
-                        match self.place_ship(row, col, ship_size, &direction) {
+                        match self.place_ship(row, col - 1, ship_size, &direction) {
                             Ok(_) => break,
                             Err(err) => println!("ERR: {}", err),
                         }
