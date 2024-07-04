@@ -1,3 +1,4 @@
+use core::fmt;
 use std::{io, io::Write};
 use rand::Rng;
 use crate::ship::{Ship, ShipDirection, ShipPoint};
@@ -87,18 +88,6 @@ impl MyBoard {
         }
     }
 
-    fn draw_cell(cell: &Cell) {
-        match cell {
-            Cell::Empty => print!(". "),
-            Cell::Ship => print!("o "),
-            Cell::Hit => print!("x "),
-        }
-    }
-
-    pub fn draw_board(&self) {
-        Board::draw_board(self, self.cells, MyBoard::draw_cell);
-    }
-
     fn parse_user_input(input: &str) -> Result<(char, i8, ShipDirection), &'static str> {
         const WRONG_FORMAT_ERROR_MESSAGE: &str = "Wrong input format. Input example: A5 D";
         let mut chars = input.chars();
@@ -179,5 +168,19 @@ impl Board for MyBoard {
         return Self {
             cells: [[Cell::Empty; 10]; 10]
         };
+    }
+}
+
+fn get_cell_display_value(cell: &Cell) -> &'static str {
+    match cell {
+        Cell::Empty => return ". ",
+        Cell::Ship => return "o ",
+        Cell::Hit => return "x ",
+    };
+}
+
+impl fmt::Display for MyBoard {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return self.draw_board(f, self.cells, get_cell_display_value);
     }
 }

@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::ship::ShipPoint;
 
 pub mod attacking_board;
@@ -14,24 +16,26 @@ pub trait Board {
         return true;
     }
 
-    fn draw_board<T>(&self, cells: [[T; 10]; 10], draw_cell: fn(&T)) {
+    fn draw_board<T>(&self, f: &mut fmt::Formatter, cells: [[T; 10]; 10], get_cell_display_value: fn(&T) -> &'static str) -> fmt::Result {
         // Clears terminal screen
-        print!("{}[2J", 27 as char);
-        println!("   A B C D E F G H I J");
+        write!(f, "{}[2J", 27 as char)?;
+        write!(f, "   A B C D E F G H I J\n")?;
         for (index, row) in cells.iter().enumerate() {
             let index = index + 1;
             if index < 10 {
-                print!("{}  ", index);
+                write!(f, "{}  ", index)?;
             } else {
-                print!("{} ", index);
+                write!(f, "{} ", index)?;
             }
 
             for cell in row {
-                draw_cell(cell);
+                write!(f, "{}", get_cell_display_value(cell))?;
             }
 
-            println!();
+            write!(f, "\n")?;
         }
+
+        return write!(f, "\n");
     }
 }
 

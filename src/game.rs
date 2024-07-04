@@ -31,8 +31,8 @@ impl Game {
   pub fn start(&mut self) {
     const WRONG_FORMAT_ERROR_MESSAGE: &str = "Wrong input format. Input example: A5";
 
-    self.player_a_board.draw_board();
-    self.player_a_attacking_board.draw_board();
+    println!("{}", self.player_a_board);
+    println!("{}", self.player_a_attacking_board);
 
     loop {
       let mut input = String::new();
@@ -58,7 +58,7 @@ impl Game {
       };
 
       match self.shoot('A', &ShipPoint::new(col, row)) {
-        Ok(_) => self.player_a_attacking_board.draw_board(),
+        Ok(_) => println!("{}", self.player_a_attacking_board),
         Err(err) => {
           println!("Error: {}", err);
           continue;

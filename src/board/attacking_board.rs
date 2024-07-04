@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::ship::ShipPoint;
 use super::Board;
 
@@ -31,18 +33,6 @@ impl AttackingBoard {
 
         return Ok(());
     }
-
-    fn draw_cell(cell: &Cell) {
-        match cell {
-            Cell::Empty => print!(". "),
-            Cell::Miss => print!("o "),
-            Cell::Hit => print!("x "),
-        }
-    }
-
-    pub fn draw_board(&self) {
-        Board::draw_board(self, self.cells, AttackingBoard::draw_cell);
-    }
 }
 
 impl Board for AttackingBoard {
@@ -50,5 +40,19 @@ impl Board for AttackingBoard {
         return Self {
             cells: [[Cell::Empty; 10]; 10]
         };
+    }
+}
+
+fn get_cell_display_value(cell: &Cell) -> &'static str {
+    match cell {
+        Cell::Empty => return ". ",
+        Cell::Miss => return "o ",
+        Cell::Hit => return "x ",
+    };
+}
+
+impl fmt::Display for AttackingBoard {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return self.draw_board(f, self.cells, get_cell_display_value);
     }
 }
