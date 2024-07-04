@@ -41,16 +41,15 @@ impl Game {
       io::stdout().flush().expect("Failed to flush stdout");
       io::stdin().read_line(&mut input).expect("Failed to read input");
 
-      let (row, col) = input.split_at(1);
-      println!("{} {}", row, col);
-      let row = match row.trim().parse::<char>() {
+      let (col, row) = input.split_at(1);
+      let col = match col.trim().parse::<char>() {
         Ok(r) => r,
         Err(_) => {
           println!("{}", WRONG_FORMAT_ERROR_MESSAGE);
           continue;
         },
       };
-      let col = match col.trim().parse::<i8>() {
+      let row = match row.trim().parse::<i8>() {
         Ok(c) => c - 1,
         Err(_) => {
           println!("{}", WRONG_FORMAT_ERROR_MESSAGE);
@@ -58,7 +57,7 @@ impl Game {
         },
       };
 
-      match self.shoot('A', &ShipPoint::new(row, col)) {
+      match self.shoot('A', &ShipPoint::new(col, row)) {
         Ok(_) => self.player_a_attacking_board.draw_board(),
         Err(err) => {
           println!("Error: {}", err);
@@ -84,10 +83,10 @@ impl Game {
 
   fn computer_shoot(&mut self) {
     let mut rng = rand::thread_rng();
-    let row = rng.gen_range(b'A'..=b'J') as char;
-    let col = rng.gen_range(1..=10);
+    let col = rng.gen_range(b'A'..=b'J') as char;
+    let row = rng.gen_range(1..=10);
 
-    match self.shoot('B', &ShipPoint::new(row, col)) {
+    match self.shoot('B', &ShipPoint::new(col, row)) {
       Ok(_) => println!("Computer shot at: {}{}", row, col),
       Err(_) => self.computer_shoot(),
     };

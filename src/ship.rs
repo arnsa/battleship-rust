@@ -13,8 +13,8 @@ pub struct ShipPoint {
 }
 
 impl ShipPoint {
-    pub fn new(row: char, col: i8) -> Self {
-        let row = ShipPoint::letter_to_number(row);
+    pub fn new(col: char, row: i8) -> Self {
+        let col = ShipPoint::letter_to_number(col);
 
         return ShipPoint { row, col };
     }

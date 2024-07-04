@@ -48,8 +48,8 @@ impl MyBoard {
                 io::stdin().read_line(&mut input).expect("Failed to read input");
 
                 match MyBoard::parse_user_input(&input) {
-                    Ok((row, col, direction)) => {
-                        match self.place_ship(&ShipPoint::new(row, col - 1 ), ship_size, &direction) {
+                    Ok((col, row, direction)) => {
+                        match self.place_ship(&ShipPoint::new((col as u8 - 1) as char, row), ship_size, &direction) {
                             Ok(_) => break,
                             Err(err) => println!("ERR: {}", err),
                         }
@@ -65,8 +65,8 @@ impl MyBoard {
 
         for ship_size in SHIPS {
             loop {
-                let row = rng.gen_range(b'A'..=b'J') as char;
-                let col = rng.gen_range(1..=10);
+                let col = rng.gen_range(b'A'..=b'J') as char;
+                let row = rng.gen_range(1..=10);
                 let direction_num = rng.gen_range(0..4);
                 let direction = match direction_num {
                     0 => ShipDirection::Up,
@@ -76,7 +76,7 @@ impl MyBoard {
                     _ => unreachable!(),
                 };
 
-                match self.place_ship(&ShipPoint::new(row, col), ship_size, &direction) {
+                match self.place_ship(&ShipPoint::new(col, row), ship_size, &direction) {
                     Ok(_) => {
                         println!("Added ship (size: {}): {}{} {:?}", ship_size, row, col, direction);
                         break;
