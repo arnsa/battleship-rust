@@ -38,3 +38,31 @@ pub trait Board {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct TestBoard;
+
+    impl Board for TestBoard {
+        fn new() -> Self {
+            TestBoard
+        }
+    }
+
+    #[test]
+    fn check_if_point_on_board() {
+        let point_on_board = ShipPoint { row: 5, col: 5 };
+        let point_off_board = ShipPoint { row: 10, col: 1 };
+
+        assert!(TestBoard::check_if_point_on_board(&point_on_board));
+        assert!(!TestBoard::check_if_point_on_board(&point_off_board));
+    }
+
+    #[test]
+    fn letter_to_number() {
+        assert_eq!(0, TestBoard::letter_to_number('a'));
+        assert_eq!(2, TestBoard::letter_to_number('c'));
+    }
+}
