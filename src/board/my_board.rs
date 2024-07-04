@@ -58,6 +58,32 @@ impl MyBoard {
         }
     }
 
+    pub fn parse_user_input(input: &str) -> Result<(char, i8, ShipDirection), &'static str> {
+        const WRONG_FORMAT_ERROR_MESSAGE: &str = "Wrong input format. Input example: A5 D";
+        let mut chars = input.chars();
+        let row = chars.next().ok_or(WRONG_FORMAT_ERROR_MESSAGE)?;
+        let col = chars
+            .by_ref()
+            .take_while(|num| num.is_digit(10))
+            .collect::<String>()
+            .parse::<i8>()
+            .map_err(|_| WRONG_FORMAT_ERROR_MESSAGE)?;
+        let direction = match chars.next().ok_or(WRONG_FORMAT_ERROR_MESSAGE) {
+            Ok('U') => ShipDirection::Up,
+            Ok('R') => ShipDirection::Right,
+            Ok('D') => ShipDirection::Down,
+            Ok('L') => ShipDirection::Left,
+            Ok(_) => return Err(WRONG_FORMAT_ERROR_MESSAGE),
+            Err(_) => return Err(WRONG_FORMAT_ERROR_MESSAGE),
+        };
+
+        if row < 'A' || row > 'J' || col < 1 || col > 10 {
+            return Err(WRONG_FORMAT_ERROR_MESSAGE);
+        };
+
+        return Ok((row, col, direction));
+    }
+
     fn check_if_ship_on_board(start_point: &ShipPoint, end_point: &ShipPoint) -> Result<bool, &'static str> {
         let ship_is_on_board =
             MyBoard::check_if_point_on_board(start_point) &&
