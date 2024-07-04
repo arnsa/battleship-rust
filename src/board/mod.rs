@@ -1,9 +1,10 @@
-use std::fmt;
-
+use std::{fmt, fmt::Write};
 use crate::ship::ShipPoint;
 
 pub mod attacking_board;
 pub mod my_board;
+
+const BOARD_LENGTH: usize = 26;
 
 pub trait Board {
     fn new() -> Self;
@@ -16,26 +17,45 @@ pub trait Board {
         return true;
     }
 
-    fn draw_board<T>(&self, f: &mut fmt::Formatter, cells: [[T; 10]; 10], get_cell_display_value: fn(&T) -> &'static str) -> fmt::Result {
-        // Clears terminal screen
-        write!(f, "{}[2J", 27 as char)?;
-        write!(f, "   A B C D E F G H I J\n")?;
+    fn get_board<T>(
+        &self,
+        buf: &mut String,
+        name: &str,
+        cells: [[T; 10]; 10],
+        get_cell_display_value: fn(&T) -> &'static str,
+        indent: usize
+    ) -> fmt::Result {
+        if indent == 0 {
+            // Clears terminal screen
+            write!(buf, "{}[2J", 27 as char)?;
+        } else {
+            // \x1B[1A moves the cursor up one line
+            // \x1B[1C moves the cursor right by 1 character
+            write!(buf, "\x1B[14A\x1B[{}C", indent * BOARD_LENGTH)?;
+        }
+
+        writeln!(buf, "{}\n", name)?;
+        writeln!(buf, "\x1B[{}C   A B C D E F G H I J", indent * BOARD_LENGTH)?;
         for (index, row) in cells.iter().enumerate() {
+            if indent != 0 {
+                write!(buf, "\x1B[{}C", indent * BOARD_LENGTH)?;
+            }
+
             let index = index + 1;
             if index < 10 {
-                write!(f, "{}  ", index)?;
+                write!(buf, "{}  ", index)?;
             } else {
-                write!(f, "{} ", index)?;
+                write!(buf, "{} ", index)?;
             }
 
             for cell in row {
-                write!(f, "{}", get_cell_display_value(cell))?;
+                write!(buf, "{}", get_cell_display_value(cell))?;
             }
 
-            write!(f, "\n")?;
+            writeln!(buf)?;
         }
 
-        return write!(f, "\n");
+        return writeln!(buf);
     }
 }
 

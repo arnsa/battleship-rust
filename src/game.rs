@@ -1,5 +1,5 @@
 use rand::Rng;
-use std::{env, io, io::Write};
+use std::{env, io::{self, Write}};
 use crate::{board::{attacking_board::AttackingBoard, my_board::MyBoard, Board}, ship::ShipPoint};
 
 pub struct Game {
@@ -31,8 +31,7 @@ impl Game {
   pub fn start(&mut self) {
     const WRONG_FORMAT_ERROR_MESSAGE: &str = "Wrong input format. Input example: A5";
 
-    println!("{}", self.player_a_board);
-    println!("{}", self.player_a_attacking_board);
+    self.draw_boards();
 
     loop {
       let mut input = String::new();
@@ -58,7 +57,7 @@ impl Game {
       };
 
       match self.shoot('A', &ShipPoint::new(col, row)) {
-        Ok(_) => println!("{}", self.player_a_attacking_board),
+        Ok(_) => self.draw_boards(),
         Err(err) => {
           println!("Error: {}", err);
           continue;
@@ -90,5 +89,15 @@ impl Game {
       Ok(_) => println!("Computer shot at: {}{}", row, col),
       Err(_) => self.computer_shoot(),
     };
+  }
+
+  fn draw_boards(&self) {
+    let mut output = String::new();
+    const DRAW_FAILED_MESSAGE: &str = "Failed to draw game board";
+
+    self.player_a_board.write_board(&mut output, 0).expect(DRAW_FAILED_MESSAGE);
+    self.player_a_attacking_board.write_board(&mut output, 1).expect(DRAW_FAILED_MESSAGE);
+
+    println!("{}", output);
   }
 }

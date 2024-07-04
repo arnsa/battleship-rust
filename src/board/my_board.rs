@@ -16,6 +16,8 @@ pub struct MyBoard {
     cells: [[Cell; 10]; 10],
 }
 
+const BOARD_NAME: &str = "My Board";
+
 const SHIPS: [u8; 5] = [5, 4, 3, 3, 2];
 
 impl MyBoard {
@@ -86,6 +88,10 @@ impl MyBoard {
                 }
             }
         }
+    }
+
+    pub fn write_board(&self, f: &mut String, indent: usize) -> fmt::Result {
+        return self.get_board(f, BOARD_NAME, self.cells, get_cell_display_value, indent);
     }
 
     fn parse_user_input(input: &str) -> Result<(char, i8, ShipDirection), &'static str> {
@@ -181,6 +187,9 @@ fn get_cell_display_value(cell: &Cell) -> &'static str {
 
 impl fmt::Display for MyBoard {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        return self.draw_board(f, self.cells, get_cell_display_value);
+        let mut buf = String::new();
+
+        self.get_board(&mut buf, BOARD_NAME, self.cells, get_cell_display_value, 0)?;
+        return write!(f, "{}", buf);
     }
 }

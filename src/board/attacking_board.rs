@@ -10,6 +10,8 @@ enum Cell {
     Hit,
 }
 
+const BOARD_NAME: &str = "Attacking Board";
+
 #[derive(Debug)]
 pub struct AttackingBoard {
     cells: [[Cell; 10]; 10],
@@ -33,6 +35,10 @@ impl AttackingBoard {
 
         return Ok(());
     }
+
+    pub fn write_board(&self, f: &mut String, indent: usize) -> fmt::Result {
+        return self.get_board(f, BOARD_NAME, self.cells, get_cell_display_value, indent);
+    }
 }
 
 impl Board for AttackingBoard {
@@ -53,6 +59,9 @@ fn get_cell_display_value(cell: &Cell) -> &'static str {
 
 impl fmt::Display for AttackingBoard {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        return self.draw_board(f, self.cells, get_cell_display_value);
+        let mut buf = String::new();
+
+        self.get_board(&mut buf, BOARD_NAME, self.cells, get_cell_display_value, 0)?;
+        return write!(f, "{}", buf);
     }
 }
