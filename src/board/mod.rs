@@ -17,4 +17,24 @@ pub trait Board {
     fn letter_to_number(letter: char) -> i8 {
         return (letter.to_ascii_lowercase()) as i8 - 'a' as i8;
     }
+
+    fn draw_board<T>(&self, cells: [[T; 10]; 10], draw_cell: fn(&T)) {
+        // Clears terminal screen
+        print!("{}[2J", 27 as char);
+        println!("   A B C D E F G H I J");
+        for (index, row) in cells.iter().enumerate() {
+            let index = index + 1;
+            if index < 10 {
+                print!("{}  ", index);
+            } else {
+                print!("{} ", index);
+            }
+
+            for cell in row {
+                draw_cell(cell);
+            }
+
+            println!();
+        }
+    }
 }

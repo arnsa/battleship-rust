@@ -31,6 +31,7 @@ impl Game {
   pub fn start(&mut self) {
     const WRONG_FORMAT_ERROR_MESSAGE: &str = "Wrong input format. Input example: A5";
 
+    self.player_a_board.draw_board();
     self.player_a_attacking_board.draw_board();
 
     loop {

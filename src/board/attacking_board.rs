@@ -1,5 +1,3 @@
-use std::io::{stdout, Write};
-
 use crate::ship::ShipPoint;
 use super::Board;
 
@@ -35,28 +33,16 @@ impl AttackingBoard {
         return Ok(());
     }
 
-    pub fn draw_board(&self) {
-        // Clears terminal screen
-        print!("{}[2J", 27 as char);
-        println!("   A B C D E F G H I J");
-        for (index, row) in self.cells.iter().enumerate() {
-            let index = index + 1;
-            if index < 10 {
-                print!("{}  ", index);
-            } else {
-                print!("{} ", index);
-            }
-
-            for cell in row {
-                match cell {
-                    Cell::Empty => print!(". "),
-                    Cell::Miss => print!("o "),
-                    Cell::Hit => print!("x "),
-                }
-            }
-
-            println!();
+    fn draw_cell(cell: &Cell) {
+        match cell {
+            Cell::Empty => print!(". "),
+            Cell::Miss => print!("o "),
+            Cell::Hit => print!("x "),
         }
+    }
+
+    pub fn draw_board(&self) {
+        Board::draw_board(self, self.cells, AttackingBoard::draw_cell);
     }
 }
 

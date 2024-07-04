@@ -7,6 +7,7 @@ use super::Board;
 enum Cell {
     Empty,
     Ship,
+    Hit,
 }
 
 #[derive(Debug)]
@@ -29,12 +30,12 @@ impl MyBoard {
         let cell = row.get_mut(col as usize).ok_or("Invalid column")?;
 
         match cell {
-            Cell::Empty => {
-                return Ok(false)
-            },
+            Cell::Empty => return Ok(false),
             Cell::Ship => {
-                return Ok(true)
+                *cell = Cell::Hit;
+                return Ok(true);
             },
+            Cell::Hit => return Err("Already shot here"),
         }
     }
 
@@ -85,6 +86,18 @@ impl MyBoard {
                 }
             }
         }
+    }
+
+    fn draw_cell(cell: &Cell) {
+        match cell {
+            Cell::Empty => print!(". "),
+            Cell::Ship => print!("o "),
+            Cell::Hit => print!("x "),
+        }
+    }
+
+    pub fn draw_board(&self) {
+        Board::draw_board(self, self.cells, MyBoard::draw_cell);
     }
 
     fn parse_user_input(input: &str) -> Result<(char, i8, ShipDirection), &'static str> {
